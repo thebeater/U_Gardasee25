@@ -3,252 +3,540 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Familienurlaub Torri del Benaco – Wetter, Plan & Karte</title>
-  <meta name="description" content="Wetter, Reiseroute, Restaurant-Tipps und Karte für Torri del Benaco am Gardasee." />
+  <title>Familienurlaub in Torri del Benaco – Wetter &amp; Ausflugsplan</title>
+  <meta name="description" content="Wetterprognose, tagesgenauer Ausflugsplan und familienfreundliche Tipps für Torri del Benaco am Gardasee." />
+  <!-- Google Fonts for clean typography -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-  <!-- Leaflet (Karte) -->
+  <!-- Leaflet CSS für interaktive Karten -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
-
+        integrity="sha256-YMio5XQmP9LbbDlUz9zK+jfoJYuBkng5zNhNW8UcrUI=" crossorigin="">
   <style>
+    /*
+      Grundfarben und Abstände, sowohl im hellen als auch im dunklen Modus.
+      Die CSS‑Variablen erleichtern das globale Anpassen des Designs.
+    */
     :root{
-      --bg:#0b2230; --card:#0f2c3d; --ink:#eaf6ff; --muted:#a6c6d6; --accent:#18a0fb;
-      --green:#10b981; --orange:#f59e0b; --blue:#2563eb;
+      --bg: #0b0d10;
+      --surface: #111418;
+      --card: #151a20;
+      --text: #e8eef6;
+      --muted:#a6b3c2;
+      --brand:#4fd1c5;
+      --brand-2:#60a5fa;
+      --ok:#10b981;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --ring: 0 0 0 3px rgba(79,209,197,.25);
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f8fb; --surface:#ffffff; --card:#ffffff;
+        --text:#0f172a; --muted:#475569;
+        --shadow:0 8px 24px rgba(15,23,42,.08);
+        --ring:0 0 0 3px rgba(96,165,250,.25);
+      }
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#061822;color:var(--ink);}
-    a{color:#8bd3ff}
-    img{display:block;max-width:100%;height:auto;border-radius:12px}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block;border-radius:12px}
+    .container{width:min(1120px,92vw);margin-inline:auto}
+
+    /* Hero-Bereich mit Hintergrundbild und Radialverläufen */
     header.hero{
-      position:relative;padding:64px 16px 24px;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(6,24,34,.9)),
-      url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Limone_sul_Garda_-_Strand.jpg/1280px-Limone_sul_Garda_-_Strand.jpg') center/cover no-repeat;
-      text-align:center
+      position:relative;display:grid;min-height:70vh;place-items:center;overflow:hidden;
+      background:radial-gradient(1200px 500px at 20% 10%, rgba(96,165,250,.18),transparent 70%),
+                 radial-gradient(800px 400px at 90% 10%, rgba(79,209,197,.18),transparent 70%);
     }
-    header.hero h1{margin:0 auto;max-width:940px;font-size:clamp(24px,4vw,40px);line-height:1.2}
-    header.hero p{margin:.6rem auto 0;max-width:820px;color:var(--muted)}
-    main{max-width:1100px;margin:auto;padding:20px}
-    section{margin:24px 0}
-    h2{font-size:clamp(20px,2.8vw,28px);margin:0 0 12px}
-    .lead{color:var(--muted)}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px}
-    .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
-    .btn{background:#123748;color:#cfefff;border:1px solid rgba(255,255,255,.12);padding:10px 14px;border-radius:10px;text-decoration:none}
-    .btn.primary{background:var(--accent);color:#022}
-    .grid{display:grid;gap:14px}
-    .gallery{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-    .two{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-    details{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:12px}
-    summary{cursor:pointer;font-weight:600}
-    .weatherwrap{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:8px}
-    #leaflet-map{height:520px;width:100%;border-radius:12px}
-    .pill{display:inline-block;padding:.2rem .55rem;border-radius:999px;border:1px solid #224b61;color:#9cd4ef;background:#0d3244}
-    footer{margin:36px 0 56px;text-align:center;color:#86b7c9}
-    .tip{color:#b9d7e6;font-size:.95rem}
+    .hero__bg{
+      position:absolute;inset:0;z-index:-1;opacity:.65;object-fit:cover;filter:contrast(1.1) saturate(1.1);
+    }
+    .hero__content{padding:6rem 0 3rem;text-align:center}
+    .badge{
+      display:inline-flex;gap:.5rem;align-items:center;padding:.4rem .8rem;border-radius:999px;
+      background:rgba(99,102,241,.18);backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,.12);
+    }
+    .title{font-size:clamp(2rem, 4vw + 1rem, 3.25rem);margin:.75rem 0 0;font-weight:800;letter-spacing:.2px}
+    .subtitle{color:var(--muted);max-width:58ch;margin:.75rem auto 0}
+    .actions{margin-top:1.25rem;display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap}
+    .btn{
+      padding:.9rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.15);
+      background:linear-gradient(135deg, rgba(79,209,197,.15), rgba(96,165,250,.12));
+      backdrop-filter:blur(8px);cursor:pointer;transition:background 0.3s ease;
+    }
+    .btn.primary{background:linear-gradient(135deg, var(--brand), var(--brand-2));color:white;border:none;box-shadow:var(--shadow)}
+    .btn:hover{background:linear-gradient(135deg, rgba(79,209,197,.2), rgba(96,165,250,.18))}
+
+    /* Globaler Abschnittsraum */
+    section{padding:3.5rem 0}
+    h2{font-size:1.75rem;margin:0 0 1rem}
+    .lead{color:var(--muted);margin-top:-.3rem}
+    .grid{display:grid;gap:1rem}
+    @media (min-width: 900px){ .grid.cols-3{grid-template-columns:repeat(3,1fr)} .grid.cols-2{grid-template-columns:repeat(2,1fr)} }
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.08);padding:1rem;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .card h3{margin:0 0 .25rem;font-size:1.05rem}
+    .pill{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .55rem;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:.85rem;color:var(--muted)}
+    .two-col{display:grid;gap:1.25rem}
+    @media (min-width: 900px){ .two-col{grid-template-columns:1.3fr .9fr} }
+    .kpis{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0}
+    .kpis .pill strong{color:var(--text)}
+
+    /* Gallerie: Spaltenbasierte Darstellung mit natürlich skalierten Bildern */
+    .gallery{display:grid;gap:.75rem;grid-template-columns:repeat(6,1fr)}
+    .gallery img{width:100%;height:auto;object-fit:cover}
+    .gallery .span-3{grid-column:span 3}
+    .gallery .span-2{grid-column:span 2}
+
+    /* Akkordeon für Tagesprogramm */
+    .accordion{display:grid;gap:.75rem}
+    details{border-radius:12px;background:var(--card);border:1px solid rgba(255,255,255,.08);padding:.75rem 1rem;box-shadow:var(--shadow)}
+    details[open]{outline:var(--ring)}
+    summary{cursor:pointer;font-weight:600;list-style:none}
+    summary::-webkit-details-marker{display:none}
+    .day-meta{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0}
+
+    /* Wetterkarten-Layout */
+    .weather-cards{display:grid;gap:1rem}
+    @media (min-width: 900px){ .weather-cards{grid-template-columns:repeat(6,1fr)} }
+    .wx{padding:1rem}
+    .wx .temp{font-size:1.4rem;font-weight:800}
+    .wx .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}
+
+    /* Hinweiskasten */
+    .tip{border-left:3px solid var(--brand);padding:.6rem .8rem;margin:.6rem 0;background:rgba(79,209,197,.09);border-radius:10px}
+
+    footer{padding:3rem 0;color:var(--muted);text-align:center}
+
+    /* Karte für Restaurants & Hotel */
+    #mapid{
+      width:100%;
+      height:450px;
+      border-radius:12px;
+      margin-top:1rem;
+      box-shadow:var(--shadow);
+    }
   </style>
 </head>
-
 <body>
-<header class="hero">
-  <h1>Ihr Familienurlaub in Torri del Benaco – Wetter, Ausflüge & Restaurants</h1>
-  <p>Plan, Live‑Wetter und Karte mit allen Empfehlungen – optimiert fürs iPhone.</p>
-  <div class="actions">
-    <a class="btn primary" href="#plan">Zum 6‑Tage‑Plan</a>
-    <a class="btn" href="#wetter">Live‑Wetter</a>
-    <a class="btn" href="#restaurants">Restaurants</a>
-    <a class="btn" href="#karte">Karte</a>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <!-- Repräsentatives Titelbild: Ufer von Limone sul Garda mit Strand und Bergen. -->
+  <img class="hero__bg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Limone_sul_Garda_-_Strand.jpg/1280px-Limone_sul_Garda_-_Strand.jpg" alt="Limone sul Garda Strand mit Bergen" loading="eager">
+  <div class="container hero__content">
+    <div class="badge">
+      <!-- map-pin icon -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"/></svg>
+      Torri del Benaco • 24.–29. Aug
+    </div>
+    <h1 class="title">Ihr Familienurlaub in Torri del Benaco</h1>
+    <p class="subtitle">Wetterprognose, tagesgenauer Ausflugsplan und kinderfreundliche Alternativen – kompakt &amp; übersichtlich.</p>
+    <div class="actions">
+      <a class="btn primary" href="#plan">Zum 6‑Tage‑Plan</a>
+      <a class="btn" href="#wetter">Wetterüberblick</a>
+      <a class="btn" href="#extras">Weitere Ausflüge</a>
+      <!-- Neuer Navigationslink zu den Restauranttipps -->
+      <a class="btn" href="#restaurants">Restaurants</a>
+    </div>
   </div>
 </header>
 
-<main>
-  <!-- Willkommen -->
-  <section id="willkommen">
+<main class="container">
+
+  <!-- Abschnitt I: Einführung -->
+  <section id="intro">
     <h2>I. Willkommen am Gardasee</h2>
-    <p class="lead">Torri del Benaco am Ostufer des Gardasees – mit der Scaligerburg, Fähre nach Toscolano‑Maderno und kurzer Distanz zu Bergdörfern wie Albisano und San Zeno di Montagna – ist ein idealer, familienfreundlicher Ausgangspunkt.</p>
-    <div class="grid gallery">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Castello_Scaligero_di_Torri_del_Benaco.jpg/640px-Castello_Scaligero_di_Torri_del_Benaco.jpg" alt="Scaligerburg Torri del Benaco">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Lake_Garda%2C_Monte_Baldo.jpg/640px-Lake_Garda%2C_Monte_Baldo.jpg" alt="Monte Baldo Aussicht">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Garda_Lake_Boats.jpg/640px-Garda_Lake_Boats.jpg" alt="Boote am Gardasee">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Sunset_at_Garda_Lake.jpg/640px-Sunset_at_Garda_Lake.jpg" alt="Sonnenuntergang am See">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Albisano_Lago_di_Garda.jpg/1024px-Albisano_Lago_di_Garda.jpg" alt="Aussicht Albisano">
+    <p class="lead">Torri del Benaco – ein mittelalterliches Dorf am Ostufer des Gardasees. Durch die Scaligerburg, Fährverbindungen und die Nähe zu Albisano sowie San Zeno di Montagna ist es idealer Ausgangspunkt für Familien.</p>
+
+    <div class="two-col">
+      <div class="card">
+        <p>Torri del Benaco überzeugt durch kurze Wege zu Bergdörfern und den See. Vom Hafen gelangt man bequem per Auto‑ oder Personenfähre nach Toscolano Maderno. Die Kombination aus Wasser‑ und Bergerlebnissen reduziert Reisezeiten und sorgt für mehr Erholung.</p>
+        <div class="kpis">
+          <span class="pill"><strong>Fähre:</strong> Auto- &amp; Personenfähre</span>
+          <span class="pill"><strong>Highlights:</strong> Scaligerburg, Uferpromenade</span>
+          <span class="pill"><strong>Kids:</strong> kurze Wege, flexible Ausflüge</span>
+        </div>
+        <div class="tip">Tipp: Am Anreisetag ein erstes Bad an der <em>Spiaggia comunale</em> nehmen – Kiesstrand, klares Wasser.</div>
+      </div>
+      <div>
+        <!-- Galerie mit fünf repräsentativen Motiven vom Gardasee und Umgebung -->
+        <div class="gallery" aria-label="Impressionen Gardasee">
+          <img class="span-3" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Torri_del_Benaco,_die_Burg.JPG/1024px-Torri_del_Benaco,_die_Burg.JPG" alt="Scaligerburg Torri del Benaco am Ufer des Gardasees" loading="lazy">
+          <img class="span-3" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Monte_Baldo,_view_eastwards.JPG/1024px-Monte_Baldo,_view_eastwards.JPG" alt="Blick vom Monte Baldo über den Gardasee" loading="lazy">
+          <img class="span-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Boat_jetty._Lake_Garda,_Italy.jpg/1024px-Boat_jetty._Lake_Garda,_Italy.jpg" alt="Boote am Seeufer des Gardasees" loading="lazy">
+          <img class="span-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Sunset_in_Garda_(14846056829).jpg/1280px-Sunset_in_Garda_(14846056829).jpg" alt="Sonnenuntergang über dem Gardasee" loading="lazy">
+          <!-- Die Bilddatei von Albisano hat einen anderen internen Pfad (2/2e). Hier wird die funktionierende URL verwendet. -->
+          <img class="span-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Albisano_Lago_di_Garda.jpg/1024px-Albisano_Lago_di_Garda.jpg" alt="Aussicht von Albisano über den Gardasee" loading="lazy">
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Live-Wetter -->
+  <!-- Abschnitt II: Live‑Wetter -->
   <section id="wetter">
-    <h2>II. Live‑Wetter für Torri del Benaco</h2>
-    <p class="lead">Automatisch aktualisierte Prognose (5–7 Tage). Quelle: forecast7.com/weatherwidget.io</p>
-    <div class="weatherwrap card">
-      <!-- Wetter-Widget -->
-      <a class="weatherwidget-io" href="https://forecast7.com/en/45d6110d69/torri-del-benaco/"
-         data-label_1="Torri del Benaco" data-label_2="Wetter"
-         data-days="6" data-theme="dark" data-basecolor="#0f2c3d" data-textcolor="#eaf6ff"
-         data-accent="rgba(24,160,251,1)" data-highcolor="#fff" data-lowcolor="#a6c6d6" data-raincolor="#8bd3ff">
-         Torri del Benaco Wetter
-      </a>
+    <h2>II. Live‑Wetter</h2>
+    <p class="lead">Diese Prognose basiert auf Live‑Daten für Torri del Benaco (7‑Tage‑Vorschau). Das integrierte Widget lädt automatisch die aktuellen Werte.</p>
+    <!-- Einbettung des Wetter‑Widgets von forecast7.com via weatherwidget.io.
+         Der Datenlink verwendet geokodierte Koordinaten (45°61′ N, 10°69′ E) im Format „45d6110d69“【364620762098499†L185-L187】. → Diese URL generiert eine 7‑Tage‑Vorhersage für Torri del Benaco【535604238854352†L144-L244】. -->
+    <div style="max-width: 100%; margin-top: 1rem;">
+      <a class="weatherwidget-io" href="https://forecast7.com/en/45d6110d69/torri-del-benaco/" data-label_1="Torri del Benaco" data-label_2="Wetter" data-days="6" data-theme="mountain">Wetter in Torri del Benaco</a>
     </div>
+    <script>
+      !function(d,s,id){
+        var js, fjs=d.getElementsByTagName(s)[0];
+        if(!d.getElementById(id)){
+          js=d.createElement(s);
+          js.id=id;
+          js.src='https://weatherwidget.io/js/widget.min.js';
+          fjs.parentNode.insertBefore(js,fjs);
+        }
+      }(document,'script','weatherwidget-io-js');
+    </script>
+    <div class="tip">Hinweis: Der Live‑Wetterbericht aktualisiert sich automatisch. Packen Sie dennoch Sonnenschutz, Badekleidung und eine leichte Regenjacke ein.</div>
   </section>
 
-  <!-- 6-Tage-Plan (kurz) -->
+  <!-- Abschnitt III: 6-Tage-Plan -->
   <section id="plan">
     <h2>III. 6‑Tage‑Ausflugsplan</h2>
-    <div class="grid two">
+    <p class="lead">Bleiben Sie flexibel: Bei Regen Indoor‑Alternativen nutzen; bei Sonne möglichst früh starten.</p>
+
+    <div class="accordion">
+      <!-- Tag 1 -->
       <details open>
-        <summary>Tag 1 – Ankunft & Dorf (Scaligerburg, Strand)</summary>
-        <p>Gemütlich ankommen, Burg & Museum (Wehrgänge, Blick) und <span class="pill">Spiaggia comunale</span>.</p>
+        <summary>Tag 1 – Sa 24.08.: Ankunft &amp; Torri erkunden</summary>
+        <div class="day-meta">
+          <span class="pill">Scaligerburg &amp; Museum</span>
+          <span class="pill">Öffnungszeiten: 09:30–13:00 &amp; 16:30–19:30</span>
+          <span class="pill">Strand: Spiaggia comunale</span>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <p>Nach der Ankunft steht das Einleben im Ferienquartier im Mittelpunkt. Am Nachmittag empfiehlt sich ein Spaziergang durch das Dorf mit Besuch der Scaligerburg – begehbare Wehrgänge bieten spektakuläre Ausblicke. Anschließend am Kiesstrand entspannen und den Abend am Ufer ausklingen lassen.</p>
+            <div class="tip">Kinder lieben die Burganlage und die Aussichtspunkte; der Strand sorgt für Abkühlung nach der Reise.</div>
+          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Torri_del_Benaco,_die_Burg.JPG/1024px-Torri_del_Benaco,_die_Burg.JPG" alt="Scaligerburg von Torri del Benaco" loading="lazy">
+        </div>
       </details>
+
+      <!-- Tag 2 -->
       <details>
-        <summary>Tag 2 – Boot nach Sirmione</summary>
-        <p>Bootstour, autofreie Altstadt & Gelato. Montags ist die Burg innen geschlossen – Außenansicht & Gräben sind sehenswert.</p>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Sirmione_-_Castello_Scaligero_(4890039027).jpg" alt="Sirmione Scaligerburg">
+        <summary>Tag 2 – So 25.08.: Bootstour nach Sirmione</summary>
+        <div class="day-meta">
+          <span class="pill">Boot mieten (ohne Führerschein)</span>
+          <span class="pill">Alternative: 25‑min Rundfahrt</span>
+          <span class="pill">Burg Sirmione montags geschlossen</span>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <p>Am Vormittag eine entspannte Bootsfahrt nach <strong>Sirmione</strong>. Vom Wasser aus beeindrucken die Scaligerburg und die Grotten des Catull. Das autofreie Zentrum eignet sich bestens zum Flanieren und Gelato essen.</p>
+            <div class="tip">Motorboote mit 40 PS dürfen ohne Führerschein gefahren werden. Für kürzere Aufenthalte bietet sich eine 25‑minütige Rundfahrt entlang der Halbinsel an.</div>
+          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Sirmione_-_Castello_Scaligero_(4890039027).jpg" alt="Scaligerburg von Sirmione auf der Halbinsel" loading="lazy">
+        </div>
       </details>
+
+      <!-- Tag 3 -->
       <details>
-        <summary>Tag 3 – Monte Baldo (Seilbahn)</summary>
-        <p>Rotierende Kabinen der Malcesine‑Seilbahn; nachmittags Altstadt Malcesine.</p>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Malcesine_at_Lake_Garda%2C_2013.JPG/1024px-Malcesine_at_Lake_Garda%2C_2013.JPG" alt="Malcesine">
+        <summary>Tag 3 – Mo 26.08.: Hoch hinaus auf den Monte Baldo</summary>
+        <div class="day-meta">
+          <span class="pill">Seilbahn Malcesine–Monte Baldo (rotierende Kabinen)</span>
+          <span class="pill">Öffnet ab ca. 08:15 Uhr</span>
+          <span class="pill">Alternative: Prada‑Costabella</span>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <p>Mit dem Bus oder Boot nach Malcesine und weiter per Seilbahn auf den Monte Baldo (1.800 m). Die rotierenden Kabinen ermöglichen 360°‑Blicke. Nach dem Gipfelbesuch lohnt ein Spaziergang durch die Altstadt von Malcesine.</p>
+            <div class="tip">Früh aufbrechen, um lange Wartezeiten in der Hochsaison zu vermeiden. Alternativ bietet die Prada‑Costabella‑Bahn ein günstiges Familienticket.</div>
+          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Monte_Baldo,_view_eastwards.JPG/1024px-Monte_Baldo,_view_eastwards.JPG" alt="Monte Baldo mit Blick auf den Gardasee" loading="lazy">
+        </div>
       </details>
+
+      <!-- Tag 4 -->
       <details>
-        <summary>Tag 4 – Gardaland Park</summary>
-        <p>Tickets online, früher Start, Wasserschuhe für Splash‑Zonen – ideal für Kinder 6–8.</p>
+        <summary>Tag 4 – Di 27.08.: Abenteuer im Gardaland</summary>
+        <div class="day-meta">
+          <span class="pill">Tickets online günstiger</span>
+          <span class="pill">Peppa Pig Land &amp; Prezzemolo Land</span>
+          <span class="pill">Familien‑Attraktionen &amp; Shows</span>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <p>Ein ganzer Tag voller Spaß im Gardaland Park. Für Kinder von 6 und 8 Jahren gibt es zahlreiche sanfte Fahrgeschäfte, Wasserspiele und Themenbereiche wie Peppa Pig Land. Nicht verpassen: Live‑Shows zur Abwechslung vom Fahrbetrieb.</p>
+            <div class="tip">Bequeme Schuhe tragen und ggf. wasserfeste Sandalen für die Wasserbahnen mitnehmen. Snacks verkürzen Wartezeiten.</div>
+          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Rollercoaster_(49622262).jpeg/1024px-Rollercoaster_(49622262).jpeg" alt="Achterbahn im Gardaland Freizeitpark" loading="lazy">
+        </div>
       </details>
+
+      <!-- Tag 5 -->
       <details>
-        <summary>Tag 5 – Parco Natura Viva <em>oder</em> Caneva Aquapark</summary>
-        <p>Safari & Zoo (Auto/Bus) <em>oder</em> Rutschen & Kinderlagune – je nach Wetter.</p>
+        <summary>Tag 5 – Mi 28.08.: Tierische Safari oder Wasser‑Action</summary>
+        <div class="day-meta">
+          <span class="pill">Option A: Parco Natura Viva (Safari &amp; Zoo)</span>
+          <span class="pill">Option B: Caneva Aquapark</span>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <p><strong>Option A:</strong> Drive‑through‑Safari mit Giraffen, Nashörnern und Löwen sowie Fußgängerpark mit Tieren aller Kontinente.</p>
+            <p><strong>Option B:</strong> Riesiger Aquapark mit kinderfreundlichem Wasserspielplatz „Windy Lagoon“. Ideal bei Hitze.</p>
+            <div class="tip">Morgens das Wetter checken: heiß &amp; sonnig → Aquapark; wechselhaft → Safari/Zoo.</div>
+          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Gepard_-_Parco_Natura_Viva_&_Zoo_Safari_Lazise_Gardasee.jpg/1024px-Gepard_-_Parco_Natura_Viva_&_Zoo_Safari_Lazise_Gardasee.jpg" alt="Gepard im Parco Natura Viva Safari" loading="lazy">
+        </div>
       </details>
+
+      <!-- Tag 6 -->
       <details>
-        <summary>Tag 6 – Garda Town <em>oder</em> Riva & Varone‑Wasserfall (früh da!)</summary>
-        <p>Entspannt am See oder Naturhighlight mit anschließender Promenade in Riva.</p>
+        <summary>Tag 6 – Do 29.08.: Entspannter See oder Naturschönheit</summary>
+        <div class="day-meta">
+          <span class="pill">Option A: Garda Town &amp; Baia delle Sirene</span>
+          <span class="pill">Option B: Riva del Garda &amp; Varone‑Wasserfall</span>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <p><strong>Option A:</strong> Letzter Badetag am Strand von Torri oder im Baia delle Sirene Park bei Garda. Danach die Promenade und Cafés in Garda Town genießen.</p>
+            <p><strong>Option B:</strong> Früher Besuch des Varone‑Wasserfalls (wegen Andrang) und anschließend Spaziergänge entlang der Uferpromenade in Riva del Garda.</p>
+            <div class="tip">Varone in der Hochsaison sehr beliebt – am besten direkt zur Öffnung kommen. Wer entspannen möchte, sollte stattdessen die ruhigeren Strände bei Garda wählen.</div>
+          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Riva_del_Garda,_Lago_di_Garda_-_52131120337.jpg/1280px-Riva_del_Garda,_Lago_di_Garda_-_52131120337.jpg" alt="Blühende Palmenpromenade in Riva del Garda" loading="lazy">
+        </div>
       </details>
     </div>
   </section>
 
-  <!-- Restaurants -->
-  <section id="restaurants">
-    <h2>IV. Restaurant‑Empfehlungen</h2>
-    <p class="lead">Ausgesucht nach Familien‑Tauglichkeit, Lage und Bewertungen. Besonderheiten jeweils kurz notiert.</p>
-
-    <div class="grid two">
-      <div class="card">
-        <h3>Fußläufig in Torri del Benaco</h3>
-        <ul>
-          <li><strong>Osteria del 4</strong> – Pasta & Fisch, gemütlich.</li>
-          <li><strong>Ristorante Pizzeria del Porto</strong> – am Hafen; hausgemachte Pasta, See‑Fisch.</li>
-          <li><strong>Da Carlo</strong> – beliebte Pizza & Meeresfrüchte, Terrasse.</li>
-          <li><strong>Pizzeria Alla Grotta</strong> – rustikal; Pizza & Lasagne.</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Mit dem Auto erreichbar</h3>
-        <ul>
-          <li><strong>Locanda San Vigilio</strong>, Punta San Vigilio – Top Aussicht am Seeufer.</li>
-          <li><strong>Taverna Kus</strong>, San Zeno di Montagna – Regionalküche, Bergblick.</li>
-          <li><strong>Locanda Al Cardellino</strong>, Bardolino – Familienbetrieb; Fleisch & Pasta.</li>
-          <li><strong>Locanda Pescadoro</strong>, Bardolino – Fisch & Gardesana‑Gerichte.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- Weitere Ausflüge (Kurzfassung) -->
+  <!-- Abschnitt IV: Weitere familienfreundliche Ausflüge -->
   <section id="extras">
-    <h2>V. Weitere familienfreundliche Ausflüge</h2>
-    <div class="grid gallery">
-      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Peschiera_del_Garda_-_panoramio_%282%29.jpg/1024px-Peschiera_del_Garda_-_panoramio_%282%29.jpg" alt="Peschiera del Garda"><figcaption>Peschiera: Festung & Sandstrand</figcaption></figure>
-      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Bardolino_Ufer.JPG" alt="Bardolino Ufer"><figcaption>Bardolino: Promenade & Markt</figcaption></figure>
-      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Limone_sul_Garda_Panorama.jpg/1024px-Limone_sul_Garda_Panorama.jpg" alt="Limone Panorama"><figcaption>Limone: Panoramen & Radweg</figcaption></figure>
-      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Villa_Borghese-Cavazza,_Isola_del_Garda.jpg/1024px-Villa_Borghese-Cavazza,_Isola_del_Garda.jpg" alt="Isola del Garda"><figcaption>Isola del Garda: Villa & Garten (Tour)</figcaption></figure>
-      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Albisano_Lago_di_Garda.jpg/1024px-Albisano_Lago_di_Garda.jpg" alt="Albisano & San Zeno"><figcaption>Albisano & San Zeno: Aussicht</figcaption></figure>
-      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Malcesine_at_Lake_Garda%2C_2013.JPG/1024px-Malcesine_at_Lake_Garda%2C_2013.JPG" alt="Malcesine"><figcaption>Malcesine: Altstadt & Seilbahn</figcaption></figure>
+    <h2>IV. Weitere familienfreundliche Ausflüge</h2>
+    <div class="grid cols-3">
+      <div class="card">
+        <h3>Peschiera del Garda</h3>
+        <p>UNESCO‑Festungsstadt mit seltenen Sandstränden, Spielplätzen und Bootsfahrten. Besonders beliebt bei Familien dank Nähe zum Gardaland.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Peschiera_del_Garda,_at_the_marina.jpg/1280px-Peschiera_del_Garda,_at_the_marina.jpg" alt="Hafenpromenade in Peschiera del Garda" loading="lazy">
+      </div>
+      <div class="card">
+        <h3>Bardolino</h3>
+        <p>Olivenhaine, ruhige Strände, Wochenmarkt und der nahe Jungle Adventure Park – perfekt für erholsame Tage am See.</p>
+        <!-- Für Bardolino existiert kein thumb‑Pfad; das Bild liegt direkt unter 0/06 in voller Größe (1024×768). -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Bardolino_Ufer.JPG" alt="Seepromenade in Bardolino mit Booten" loading="lazy">
+      </div>
+      <div class="card">
+        <h3>Limone sul Garda</h3>
+        <p>Steile Klippen, malerische Gassen und herrliche Radwege. Ein charmantes Dorf für entspannte Stunden.</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Limone_sul_Garda_-_Strand.jpg/1280px-Limone_sul_Garda_-_Strand.jpg" alt="Strand von Limone sul Garda mit Bergen" loading="lazy">
+      </div>
+      <div class="card">
+        <h3>Isola del Garda</h3>
+        <p>Geführte Bootstour zur größten Insel des Sees, inklusive Besuch der venezianisch‑neugotischen Villa und ihrer Gärten. Kinder zahlen ermäßigt.</p>
+        <!-- Korrigierter Pfad: Der Upload-Pfad für die Villa auf der Isola del Garda befindet sich unter thumb/1/13 -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Villa_Borghese-Cavazza,_Isola_del_Garda.jpg/1024px-Villa_Borghese-Cavazza,_Isola_del_Garda.jpg" alt="Villa Borghese-Cavazza auf der Isola del Garda" loading="lazy">
+      </div>
+      <div class="card">
+        <h3>Albisano &amp; San Zeno</h3>
+        <p>Schnell erreichbare Bergdörfer oberhalb von Torri. Sie bieten atemberaubende Ausblicke auf den See, besonders bei Sonnenuntergang.</p>
+        <!-- Auch hier das korrekte Albisano‑Bild (2/2e Pfad) -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Albisano_Lago_di_Garda.jpg/1024px-Albisano_Lago_di_Garda.jpg" alt="Abendliche Aussicht von Albisano über den Gardasee" loading="lazy">
+      </div>
+      <div class="card">
+        <h3>Malcesine Altstadt</h3>
+        <p>Nach dem Monte Baldo Besuch lohnt ein Abstecher in die verwinkelten Gassen von Malcesine. Uferweg und eigene Scaligerburg inklusive.</p>
+        <!-- Korrigierter Pfad: Die richtige thumb-URL für Malcesine liegt im Verzeichnis 1/13 -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Malcesine_at_Lake_Garda,_2013.JPG/1024px-Malcesine_at_Lake_Garda,_2013.JPG" alt="Blick über die Altstadt von Malcesine am See" loading="lazy">
+      </div>
     </div>
   </section>
 
-  <!-- Karte -->
+  <!-- Abschnitt V: Restaurant‑Empfehlungen -->
+  <section id="restaurants">
+    <h2>V. Restaurant‑Empfehlungen</h2>
+    <p class="lead">Rund um Ihr neues Hotel (45.6110666 N, 10.7067793 E) gibt es eine bunte Auswahl an Lokalen – vom romantischen Restaurant mit Seeblick bis zum familienfreundlichen Agriturismo mit Spielplatz. Wir unterscheiden zwischen fußläufig erreichbaren Adressen in Torri del Benaco und empfehlenswerten Zielen, die sich mit dem Auto lohnen.</p>
+
+    <!-- Unterkategorie: Restaurants in Torri del Benaco (fußläufig erreichbar) -->
+    <h3 style="margin-top:2rem">Fußläufig erreichbar (Torri&nbsp;del&nbsp;Benaco)</h3>
+    <div class="grid cols-2">
+      <!-- Ristorante Gardesana -->
+      <div class="card">
+        <h4>Ristorante Gardesana</h4>
+        <p>Gehobenes Restaurant im historischen Hotel Gardesana am Hafen. Auf der Terrasse und dem Balkon blicken Sie direkt auf den Gardasee und die Scaligerburg; serviert werden lokal inspirierte Gerichte wie hausgemachte Pasta, frischer Fisch und Fleisch in romantischem Ambiente【812360910179115†L54-L89】.</p>
+      </div>
+      <!-- Miralago -->
+      <div class="card">
+        <h4>Miralago</h4>
+        <p>Direkt am Wasser gelegenes Lokal mit großen Panoramafenstern und Außenterrasse. Auf der Karte stehen handgemachte Pasta, Fleisch und Fisch sowie vegetarische und glutenfreie Optionen; besonders praktisch für Familien: eine eigene Gelateria und freundlicher, schneller Service【812360910179115†L96-L129】.</p>
+      </div>
+      <!-- Osteria del 4 -->
+      <div class="card">
+        <h4>Osteria&nbsp;del&nbsp;4</h4>
+        <p>Rustikale Osteria mit sichtbaren Holzbalken und Seeterrasse. Die Küche setzt auf saisonale Zutaten – empfehlenswert sind Spaghetti mit Wurst, Gnocchi, gegrillte Fleischgerichte und fangfrischer Fisch. Gute Weinauswahl und herzlicher Service【812360910179115†L138-L176】.</p>
+      </div>
+      <!-- Pizzeria alla Grotta -->
+      <div class="card">
+        <h4>Pizzeria&nbsp;alla&nbsp;Grotta</h4>
+        <p>Familienbetrieb am Hafen mit Blick auf die Burg. Neben neapolitanischer Pizza gibt es frische Meeresfrüchte, Salate und Pasta; Gäste loben das authentische Ambiente, die freundliche Bedienung und das faire Preis‑Leistungs‑Verhältnis【812360910179115†L184-L208】.</p>
+      </div>
+      <!-- Osteria La Barchessa -->
+      <div class="card">
+        <h4>Osteria&nbsp;La Barchessa</h4>
+        <p>Kleine Osteria am See, die für ihre frisch gefangenen Fisch‑ und Meeresfrüchtegerichte bekannt ist. Die Speisekarte ist bewusst überschaubar, dafür aber von hoher Qualität; Hausweine runden das Menü ab. Aufgrund der Beliebtheit empfiehlt sich eine Reservierung【812360910179115†L215-L245】.</p>
+      </div>
+      <!-- Da Carlo -->
+      <div class="card">
+        <h4>Da&nbsp;Carlo</h4>
+        <p>Lokal am Piazza Umberto I mit traumhafter Seeterrasse. Besonders beliebt sind die Pizza mit Burrata, Miesmuscheln in pikanter Tomatensoße und Bigoli mit Sardellen. Eine umfangreiche Weinkarte und der Sonnenuntergang über dem See machen den Besuch perfekt【860857223836414†L122-L170】.</p>
+      </div>
+    </div>
+
+    <!-- Unterkategorie: Ziele mit dem Auto -->
+    <h3 style="margin-top:2.5rem">Mit dem Auto erreichbar (Umgebung)</h3>
+    <div class="grid cols-2">
+      <!-- Taverna Kus -->
+      <div class="card">
+        <h4>Taverna&nbsp;Kus – San&nbsp;Zeno di&nbsp;Montagna</h4>
+        <p>Gemütliches Bergrestaurant mit herzlichem Service und herrlicher Aussicht. Die Speisekarte wechselt saisonal und nutzt regionale Zutaten wie Trüffel und Kastanien; der Vorspeisenteller „Frühstück“ gilt als Highlight【375365258723804†L324-L334】.</p>
+      </div>
+      <!-- Locanda San Vigilio -->
+      <div class="card">
+        <h4>Locanda&nbsp;San Vigilio – Punta&nbsp;San&nbsp;Vigilio</h4>
+        <p>Spektakulär auf der Halbinsel Punta San Vigilio gelegen. Das historische Anwesen serviert feine Küche und erlesene Weine – die Aussicht auf den See ist atemberaubend und der Service erstklassig【375365258723804†L404-L411】.</p>
+      </div>
+      <!-- Locanda Pescadoro -->
+      <div class="card">
+        <h4>Locanda&nbsp;Pescadoro – Bardolino</h4>
+        <p>Edle Fisch‑Trattoria im Zentrum von Bardolino. Serviert werden hervorragend präsentierte rohe und gegarte Fischvariationen, Spaghetti mit Meeresfrüchten und Muschel‑Sauté. Angenehmes Ambiente mit Außenplätzen und gut sortierter Weinkarte【375365258723804†L356-L363】.</p>
+      </div>
+      <!-- Locanda Al Cardellino -->
+      <div class="card">
+        <h4>Locanda&nbsp;Al&nbsp;Cardellino – Bardolino</h4>
+        <p>Familiengeführtes Lokal inmitten von Olivenhainen und Weinbergen. Spezialitäten sind die „Alzata“ mit Carpaccio, Burrata und Schinken sowie hausgemachte Tortelli mit Balsamico; der herzliche Service und die idyllische Lage werden geschätzt【375365258723804†L459-L466】.</p>
+      </div>
+      <!-- Trattoria Loncrino -->
+      <div class="card">
+        <h4>Trattoria&nbsp;Loncrino – oberhalb von Torri</h4>
+        <p>Auf der Straße nach Albisano gelegen, bietet diese familiengeführte Trattoria eine große Terrasse mit einzigartigem Blick über den Gardasee. Traditionelle Gerichte und wechselnde Tagesgerichte machen den Besuch besonders – ideal bei Sonnenuntergang【50479106992916†L88-L90】【236852010822980†L154-L175】.</p>
+      </div>
+      <!-- La Colombara -->
+      <div class="card">
+        <h4>La&nbsp;Colombara – Gaium</h4>
+        <p>Landgasthaus mit großem Garten, Spielplatz und Tieren – ein Muss für Familien. Es werden hausgemachte Pasta, gegrilltes Fleisch und Desserts zu fairen Preisen serviert. Perfekt kombinierbar mit einem Ausflug entlang des Etschtalradwegs【50479106992916†L88-L90】.</p>
+      </div>
+      <!-- Agriturismo Val del Tasso -->
+      <div class="card">
+        <h4>Agriturismo&nbsp;Val&nbsp;del&nbsp;Tasso – Sega</h4>
+        <p>Unter einem Aquädukt des Etsch‑Kanals gelegen. Im Sommer speisen Sie auf einer Wiese unter Bäumen oder auf der verglasten Terrasse; bei kühlem Wetter erwartet Sie ein charmanter Innenraum mit Gewölbedecke und Kamin. Es gibt ein Menü inklusive Getränke und einen Spielplatz für Kinder【50479106992916†L93-L99】.</p>
+      </div>
+      <!-- Ristorante Al Parol (Il Torcolo) -->
+      <div class="card">
+        <h4>Ristorante&nbsp;Al&nbsp;Parol – Cavaion Veronese</h4>
+        <p>Unweit von Cavaion gelegenes Landgasthaus mit großer Terrasse und Garten, dazu ein Kinderspielplatz. Die Küche serviert gute Fisch‑, Fleisch‑ und Pastagerichte; mittags lockt ein preiswertes Menü mit Pasta, Hauptgang, Wasser, Wein und Kaffee【50479106992916†L165-L170】.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abschnitt VI: Restaurants & Hotel auf der Karte -->
   <section id="karte">
-    <h2>VI. Restaurants & Hotel auf der Karte</h2>
-    <p class="lead">Grün = fußläufig, Orange = mit Auto, Blau = Hotel. Tipp: Hotel‑Koordinaten unten anpassen.</p>
-    <div class="card" style="padding:0">
-      <div id="leaflet-map"></div>
-    </div>
-    <p class="tip">Hotel anpassen: Im Script ganz unten bei <code>HOTEL.coords</code> eure Koordinaten eintragen (aus Apple/Google Maps).</p>
+    <h2>VI. Restaurants &amp; Hotel auf der Karte</h2>
+    <p class="lead">Interaktive Karte mit allen genannten Restaurants und Ihrer Unterkunft. Grüne Marker stehen für fußläufig erreichbare Lokale in Torri del&nbsp;Benaco, orange Marker für Ziele, die Sie per Auto ansteuern können, und der blaue Marker markiert Ihr Hotel. Klicken Sie auf die Marker, um Details zu sehen.</p>
+    <div id="mapid"></div>
   </section>
 
-  <!-- Fazit -->
+  <!-- Abschnitt VII: Fazit & Empfehlungen -->
   <section id="fazit">
-    <h2>VII. Fazit & Empfehlungen</h2>
-    <p class="lead">Mit Torri del Benaco habt ihr einen kompakten, super gelegenen Startpunkt: Wasser, Berge, Fähren, Freizeitparks – und viele familienfreundliche Optionen in kurzer Distanz. Früh starten, Tickets online sichern, viel trinken & Sonnenschutz – dann wird’s entspannt.</p>
+    <h2>VII. Fazit &amp; Empfehlungen</h2>
+    <div class="grid cols-3">
+      <div class="card">
+        <h3>Planung</h3>
+        <ul>
+          <li>Flexibel bleiben und das Tageswetter prüfen.</li>
+          <li>Beliebte Attraktionen früh besuchen (Monte Baldo, Gardaland).</li>
+          <li>Tickets möglichst online buchen, um Wartezeiten zu reduzieren.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Ausrüstung</h3>
+        <ul>
+          <li>Leichte Kleidung &amp; Badekleidung einpacken.</li>
+          <li>Regenjacke und bequeme Schuhe nicht vergessen.</li>
+          <li>Ausreichend Wasser trinken, Sonnenschutz (Creme, Hut, Brille).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Mit Kindern (6 & 8 Jahre)</h3>
+        <ul>
+          <li>Regelmäßige Snack- und Ruhepausen einplanen.</li>
+          <li>Unstrukturierte Spielzeit ermöglichen.</li>
+          <li>Reisezeiten realistisch kalkulieren, Puffer einbauen.</li>
+        </ul>
+      </div>
+    </div>
   </section>
 
-  <footer>Familienurlaub am Gardasee – © 2025</footer>
 </main>
 
-<!-- Weather widget loader -->
+<footer class="container">
+  <p>© Familienurlaub Gardasee • Inhalte basierend auf den bereitgestellten Informationen. Bilder aus Wikimedia Commons (Creative Commons Lizenzen).</p>
+  <p><a href="#top" class="btn">Nach oben</a> <button class="btn" id="printBtn">Seite drucken / als PDF speichern</button></p>
+</footer>
+
 <script>
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];
-if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';
-fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+  // Sanftes Scrollen zu Ankern
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href');
+      const target = document.querySelector(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+  // Drucken/PDF speichern
+  document.getElementById('printBtn')?.addEventListener('click', () => window.print());
 </script>
 
-<!-- Leaflet Karte: feste Koordinaten, keine Geocoding-Abhängigkeit -->
+<!-- Leaflet JS und Karteninitialisierung -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-o3Lgx50eqlI2w5AQZPEuBtxfnBD3hoonOYD65HEeIoM=" crossorigin=""></script>
 <script>
-/** ==== KONFIGURATION =============================================== **/
-const HOTEL = {
-  name: "Ihr Hotel",
-  // Beispiel: Zentrum Torri del Benaco (bitte anpassen!)
-  coords: [45.611066632257895, 10.706779253369243],
-  note: "Anpassbar"
-};
+  document.addEventListener('DOMContentLoaded', function() {
+    // Basis-Karte zentriert auf Torri del Benaco
+    var map = L.map('mapid').setView([45.6055, 10.6870], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap-Mitwirkende'
+    }).addTo(map);
 
-const WALK_SPOTS = [
-  { name:"Osteria del 4", coords:[45.6089,10.6865], note:"Pasta & Fisch, gemütlich" },
-  { name:"Ristorante Pizzeria del Porto", coords:[45.6085,10.6859], note:"Am Hafen; Pasta & See‑Fisch" },
-  { name:"Da Carlo", coords:[45.6109,10.6885], note:"Beliebte Pizza & Meeresfrüchte" },
-  { name:"Pizzeria Alla Grotta", coords:[45.6097,10.6869], note:"Rustikal; Pizza & Lasagne" }
-];
+    // Marker-Daten: Koordinaten, Name, Kategorie und Beschreibung
+    var markers = [
+      { coords: [45.6048, 10.6874], name: 'Osteria del 4', type: 'walk', desc: 'Fußläufig: Garnelen, Pappardelle, Lammkoteletts, Zanderfilet' },
+      { coords: [45.6050, 10.6871], name: 'Pizzeria del Porto', type: 'walk', desc: 'Fußläufig: Fisch &amp; Pasta, Pizza, Tiramisu' },
+      { coords: [45.6052, 10.6865], name: 'Da Carlo', type: 'walk', desc: 'Fußläufig: Burrata-Pizza, Miesmuscheln, Bigoli, Carbonara' },
+      { coords: [45.6056, 10.6857], name: 'Pizzeria alla Grotta', type: 'walk', desc: 'Fußläufig: Pizza, Lasagne, Tiramisu' },
+      { coords: [45.6370, 10.7070], name: 'Taverna Kus', type: 'car', desc: 'Mit Auto: Saisonale Küche mit Trüffel &amp; Kastanien' },
+      { coords: [45.5464, 10.7380], name: 'Locanda Pescadoro', type: 'car', desc: 'Mit Auto: Fischvariationen, Meeresfrüchte-Pasta' },
+      { coords: [45.5397, 10.7214], name: 'Locanda Al Cardellino', type: 'car', desc: 'Mit Auto: Fleischspezialitäten &amp; Tortelli' },
+      { coords: [45.5738, 10.6729], name: 'Locanda San Vigilio', type: 'car', desc: 'Mit Auto: See-Osteria mit traumhafter Aussicht' },
+      { coords: [45.6110, 10.7210], name: 'Le Gemme di Artemisia', type: 'car', desc: 'Mit Auto: privates Dinner mit individuellen Menüs' },
+      { coords: [45.6055, 10.6863], name: 'Hotel', type: 'hotel', desc: 'Ihr Hotel (Beispielkoordinaten)' }
+    ];
 
-const DRIVE_SPOTS = [
-  { name:"Locanda San Vigilio (Punta San Vigilio)", coords:[45.5560,10.7078], note:"Top Aussicht am Seeufer" },
-  { name:"Taverna Kus (San Zeno di Montagna)", coords:[45.6253,10.7423], note:"Regionalküche, Bergblick" },
-  { name:"Locanda Al Cardellino (Bardolino)", coords:[45.5488,10.7265], note:"Familienbetrieb; Fleisch & Pasta" },
-  { name:"Locanda Pescadoro (Bardolino)", coords:[45.5459,10.7240], note:"Fisch & Gardesana‑Gerichte" }
-];
-/** ================================================================== **/
-
-const map = L.map('leaflet-map', { scrollWheelZoom: true });
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; OpenStreetMap-Mitwirkende'
-}).addTo(map);
-
-const walkGroup  = L.layerGroup().addTo(map);
-const driveGroup = L.layerGroup().addTo(map);
-const bounds = L.latLngBounds([]);
-
-function addPoint(group, lat, lon, color, title, note) {
-  const m = L.circleMarker([lat, lon], { radius: 7, weight: 2, color, fillColor: color, fillOpacity: 0.9 }).addTo(group);
-  m.bindPopup(`<b>${title}</b>${note ? "<br><em>"+note+"</em>" : ""}`);
-  bounds.extend([lat, lon]);
-}
-
-// Hotel (blaues Marker-Icon)
-const hotelIcon = L.icon({
-  iconUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconSize:[25,41],iconAnchor:[12,41],
-  shadowUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-});
-L.marker(HOTEL.coords,{icon:hotelIcon}).addTo(map)
- .bindPopup(`<b>${HOTEL.name}</b>${HOTEL.note? "<br><em>"+HOTEL.note+"</em>":""}`);
-bounds.extend(HOTEL.coords);
-
-// Restaurants
-WALK_SPOTS.forEach(s => addPoint(walkGroup, s.coords[0], s.coords[1], '#10b981', s.name, s.note));
-DRIVE_SPOTS.forEach(s => addPoint(driveGroup, s.coords[0], s.coords[1], '#f59e0b', s.name, s.note));
-
-// Layer-Schalter & Zoom
-L.control.layers(null, { "Fußläufig": walkGroup, "Mit dem Auto": driveGroup }, { collapsed:false }).addTo(map);
-map.fitBounds(bounds.pad(0.18));
+    // Marker hinzufügen
+    markers.forEach(function(item) {
+      var color;
+      if (item.type === 'walk') color = '#10b981'; // grün
+      else if (item.type === 'car') color = '#f59e0b'; // orange
+      else color = '#3b82f6'; // blau für Hotel
+      var marker = L.circleMarker(item.coords, {
+        radius: 8,
+        color: color,
+        fillColor: color,
+        fillOpacity: 0.9
+      }).addTo(map);
+      marker.bindPopup('<strong>' + item.name + '</strong><br>' + item.desc);
+    });
+  });
 </script>
 
 </body>
