@@ -8,6 +8,9 @@
   <!-- Google Fonts for clean typography -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS für interaktive Karten -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-YMio5XQmP9LbbDlUz9zK+jfoJYuBkng5zNhNW8UcrUI=" crossorigin="">
   <style>
     /*
       Grundfarben und Abstände, sowohl im hellen als auch im dunklen Modus.
@@ -106,6 +109,15 @@
     .tip{border-left:3px solid var(--brand);padding:.6rem .8rem;margin:.6rem 0;background:rgba(79,209,197,.09);border-radius:10px}
 
     footer{padding:3rem 0;color:var(--muted);text-align:center}
+
+    /* Karte für Restaurants & Hotel */
+    #mapid{
+      width:100%;
+      height:450px;
+      border-radius:12px;
+      margin-top:1rem;
+      box-shadow:var(--shadow);
+    }
   </style>
 </head>
 <body>
@@ -126,6 +138,8 @@
       <a class="btn primary" href="#plan">Zum 6‑Tage‑Plan</a>
       <a class="btn" href="#wetter">Wetterüberblick</a>
       <a class="btn" href="#extras">Weitere Ausflüge</a>
+      <!-- Neuer Navigationslink zu den Restauranttipps -->
+      <a class="btn" href="#restaurants">Restaurants</a>
     </div>
   </div>
 </header>
@@ -161,50 +175,27 @@
     </div>
   </section>
 
-  <!-- Abschnitt II: Wetterprognose -->
+  <!-- Abschnitt II: Live‑Wetter -->
   <section id="wetter">
-    <h2>II. Wetterprognose (24.–29. August)</h2>
-    <p class="lead">Warm bis heiß mit viel Sonne. Etwa jeder vierte Tag hat eine Regenwahrscheinlichkeit. UV‑Index hoch – an Sonnenschutz denken!</p>
-
-    <div class="weather-cards">
-      <!-- Kompakte Wettermeldungen; Werte basieren auf historischen Durchschnittswerte -->
-      <div class="card wx">
-        <h3>Sa 24.08.</h3>
-        <p class="temp">31 °C / 19 °C</p>
-        <div class="meta"><span>Sonne / Wolken</span><span>UV hoch</span></div>
-      </div>
-      <div class="card wx">
-        <h3>So 25.08.</h3>
-        <p class="temp">30 °C / 18 °C</p>
-        <div class="meta"><span>sonnig</span><span>Regen 20–30 %</span></div>
-      </div>
-      <div class="card wx">
-        <h3>Mo 26.08.</h3>
-        <p class="temp">29 °C / 18 °C</p>
-        <div class="meta"><span>teils wolkig</span><span>mild abends</span></div>
-      </div>
-      <div class="card wx">
-        <h3>Di 27.08.</h3>
-        <p class="temp">29 °C / 17 °C</p>
-        <div class="meta"><span>Sonne</span><span>Schauer möglich</span></div>
-      </div>
-      <div class="card wx">
-        <h3>Mi 28.08.</h3>
-        <p class="temp">28 °C / 17 °C</p>
-        <div class="meta"><span>warm</span><span>UV hoch</span></div>
-      </div>
-      <div class="card wx">
-        <h3>Do 29.08.</h3>
-        <p class="temp">28 °C / 16 °C</p>
-        <div class="meta"><span>hell</span><span>Regen ≈ 24 %</span></div>
-      </div>
+    <h2>II. Live‑Wetter</h2>
+    <p class="lead">Diese Prognose basiert auf Live‑Daten für Torri del Benaco (7‑Tage‑Vorschau). Das integrierte Widget lädt automatisch die aktuellen Werte.</p>
+    <!-- Einbettung des Wetter‑Widgets von forecast7.com via weatherwidget.io.
+         Der Datenlink verwendet geokodierte Koordinaten (45°61′ N, 10°69′ E) im Format „45d6110d69“【364620762098499†L185-L187】. → Diese URL generiert eine 7‑Tage‑Vorhersage für Torri del Benaco【535604238854352†L144-L244】. -->
+    <div style="max-width: 100%; margin-top: 1rem;">
+      <a class="weatherwidget-io" href="https://forecast7.com/en/45d6110d69/torri-del-benaco/" data-label_1="Torri del Benaco" data-label_2="Wetter" data-days="6" data-theme="mountain">Wetter in Torri del Benaco</a>
     </div>
-    <div class="kpis" style="margin-top:.75rem">
-      <span class="pill"><strong>Tageslicht:</strong> ~13 h 30 min → ~13 h 19 min</span>
-      <span class="pill"><strong>Niederschlag Aug:</strong> ~101 mm / ~12 Tage</span>
-      <span class="pill"><strong>Sonnenstunden:</strong> ~8 h pro Tag</span>
-    </div>
-    <div class="tip">Packliste: leichte, atmungsaktive Kleidung, Badekleidung, Regenjacke, Hüte, Sonnenbrillen, Sonnencreme, Trinkflaschen.</div>
+    <script>
+      !function(d,s,id){
+        var js, fjs=d.getElementsByTagName(s)[0];
+        if(!d.getElementById(id)){
+          js=d.createElement(s);
+          js.id=id;
+          js.src='https://weatherwidget.io/js/widget.min.js';
+          fjs.parentNode.insertBefore(js,fjs);
+        }
+      }(document,'script','weatherwidget-io-js');
+    </script>
+    <div class="tip">Hinweis: Der Live‑Wetterbericht aktualisiert sich automatisch. Packen Sie dennoch Sonnenschutz, Badekleidung und eine leichte Regenjacke ein.</div>
   </section>
 
   <!-- Abschnitt III: 6-Tage-Plan -->
@@ -358,9 +349,77 @@
     </div>
   </section>
 
-  <!-- Abschnitt V: Fazit & Empfehlungen -->
+  <!-- Abschnitt V: Restaurant‑Empfehlungen -->
+  <section id="restaurants">
+    <h2>V. Restaurant‑Empfehlungen</h2>
+    <p class="lead">Genießen Sie die kulinarische Vielfalt rund um Torri del&nbsp;Benaco. Hier finden Sie unsere handverlesenen Lieblingslokale – unterteilt in fußläufige Optionen im Ort und empfehlenswerte Ziele, die sich mit dem Auto bequem erreichen lassen.</p>
+
+    <!-- Unterkategorie: Restaurants in Torri del Benaco (fußläufig erreichbar) -->
+    <h3 style="margin-top:2rem">Fußläufig erreichbar (Torri&nbsp;del&nbsp;Benaco)</h3>
+    <div class="grid cols-2">
+      <!-- Osteria del 4 -->
+      <div class="card">
+        <h4>Osteria del&nbsp;4</h4>
+        <p>Lokal am Lungolago Vittorio Veneto mit einladender Atmosphäre und aufmerksamem Service. Spezialitäten sind frische Garnelen als Vorspeise, Pappardelle mit Seeragout, Rosmarin‑Lammkoteletts und Zanderfilet. Dazu passen lokale Weine【942645611336233†L80-L100】.</p>
+      </div>
+      <!-- Ristorante Pizzeria del Porto -->
+      <div class="card">
+        <h4>Ristorante Pizzeria&nbsp;del&nbsp;Porto</h4>
+        <p>Lakeside‑Restaurant nahe der kleinen Burgmarina. Die Küche bietet eine große Auswahl an Gardesana‑inspirierten Fisch‑ und Pastagerichten, von rohem Fisch und Port‑Spaghetti über gemischte Fritti bis zur hausgemachten Pizza und Tiramisù. Die Terrasse eröffnet einen wunderbaren Blick auf den See【101436444550170†L66-L74】【948040932771696†L1481-L1495】.</p>
+      </div>
+      <!-- Da Carlo -->
+      <div class="card">
+        <h4>Da&nbsp;Carlo</h4>
+        <p>Romantisches Lokal an der Piazza Umberto I mit Terrasse auf dem See. Empfehlenswert sind die Pizza mit Burrata, Miesmuscheln in scharfer Tomatensoße, Bigoli mit Sardellen sowie Spaghetti Carbonara. Die Weinkarte (u.&nbsp;a. Valpolicella Ripasso) und der Sonnenuntergang über dem Wasser runden den Abend ab【860857223836414†L122-L170】.</p>
+      </div>
+      <!-- Ristorante Pizzeria alla Grotta -->
+      <div class="card">
+        <h4>Pizzeria alla&nbsp;Grotta</h4>
+        <p>Traditionelle Trattoria der Familie Galvani direkt am Hafen mit Blick auf die Scaligerburg. Es werden klassische Gerichte serviert, darunter hausgemachte Pizza, Lasagne und Tiramisu; Gäste schätzen die freundliche Bedienung, das authentische Ambiente und das gute Preis‑Leistungs‑Verhältnis【948040932771696†L239-L245】.</p>
+      </div>
+    </div>
+
+    <!-- Unterkategorie: Ziele mit dem Auto -->
+    <h3 style="margin-top:2.5rem">Mit dem Auto erreichbar (Umgebung)</h3>
+    <div class="grid cols-2">
+      <!-- Taverna Kus -->
+      <div class="card">
+        <h4>Taverna&nbsp;Kus – San&nbsp;Zeno di&nbsp;Montagna</h4>
+        <p>Gemütliches Bergrestaurant mit herzlichem Service. Die Speisekarte wechselt saisonal und nutzt regionale Zutaten wie Trüffel und Kastanien; der Vorspeisenteller „Frühstück“ gilt als Highlight. Großzügige Parkplätze vorhanden【375365258723804†L324-L334】.</p>
+      </div>
+      <!-- Locanda Pescadoro -->
+      <div class="card">
+        <h4>Locanda&nbsp;Pescadoro – Bardolino</h4>
+        <p>Edle Fisch‑Trattoria im Zentrum von Bardolino. Serviert werden hervorragend präsentierte rohe und gegarte Fischvariationen, Spaghetti mit Meeresfrüchten und Muschel‑Sauté. Angenehmes Ambiente mit Außenplätzen und gut sortierter Weinkarte【375365258723804†L356-L363】.</p>
+      </div>
+      <!-- Locanda Al Cardellino -->
+      <div class="card">
+        <h4>Locanda&nbsp;Al&nbsp;Cardellino – Bardolino</h4>
+        <p>Vom familiengeführten Lokal auf dem Land wird Fleischliebhabern das Herz aufgehen: Probieren Sie die „Alzata“ mit Carpaccio, Burrata und Schinken sowie hausgemachte Pasta wie Tortelli mit Balsamico. Freundlicher Service und stimmungsvolle Lage【375365258723804†L459-L466】.</p>
+      </div>
+      <!-- Locanda San Vigilio -->
+      <div class="card">
+        <h4>Locanda&nbsp;San Vigilio – Punta&nbsp;San&nbsp;Vigilio</h4>
+        <p>Spektakulär am Seeufer gelegene Osteria, die per Auto oder Boot erreichbar ist. Das Team serviert sorgfältig zubereitete Gerichte in idyllischem Ambiente; die Preise sind gehoben, aber die Aussicht und der zuvorkommende Service überzeugen【375365258723804†L404-L411】.</p>
+      </div>
+      <!-- Le Gemme di Artemisia -->
+      <div class="card">
+        <h4>Le&nbsp;Gemme&nbsp;di&nbsp;Artemisia – Albisano</h4>
+        <p>Intimes Erlebnisrestaurant oberhalb von Torri del Benaco. Küchenchef Andrea Messini und Sommelière Lara Perott gestalten individuelle Menüs – Reservierung mindestens 24 Stunden im Voraus erforderlich. Ein privates Dinner wie in den eigenen vier Wänden【375365258723804†L249-L254】.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abschnitt VI: Restaurants & Hotel auf der Karte -->
+  <section id="karte">
+    <h2>VI. Restaurants &amp; Hotel auf der Karte</h2>
+    <p class="lead">Interaktive Karte mit allen genannten Restaurants und Ihrer Unterkunft. Grüne Marker stehen für fußläufig erreichbare Lokale in Torri del&nbsp;Benaco, orange Marker für Ziele, die Sie per Auto ansteuern können, und der blaue Marker markiert Ihr Hotel. Klicken Sie auf die Marker, um Details zu sehen.</p>
+    <div id="mapid"></div>
+  </section>
+
+  <!-- Abschnitt VII: Fazit & Empfehlungen -->
   <section id="fazit">
-    <h2>V. Fazit &amp; Empfehlungen</h2>
+    <h2>VII. Fazit &amp; Empfehlungen</h2>
     <div class="grid cols-3">
       <div class="card">
         <h3>Planung</h3>
@@ -410,6 +469,49 @@
   });
   // Drucken/PDF speichern
   document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+</script>
+
+<!-- Leaflet JS und Karteninitialisierung -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-o3Lgx50eqlI2w5AQZPEuBtxfnBD3hoonOYD65HEeIoM=" crossorigin=""></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Basis-Karte zentriert auf Torri del Benaco
+    var map = L.map('mapid').setView([45.6055, 10.6870], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap-Mitwirkende'
+    }).addTo(map);
+
+    // Marker-Daten: Koordinaten, Name, Kategorie und Beschreibung
+    var markers = [
+      { coords: [45.6048, 10.6874], name: 'Osteria del 4', type: 'walk', desc: 'Fußläufig: Garnelen, Pappardelle, Lammkoteletts, Zanderfilet' },
+      { coords: [45.6050, 10.6871], name: 'Pizzeria del Porto', type: 'walk', desc: 'Fußläufig: Fisch &amp; Pasta, Pizza, Tiramisu' },
+      { coords: [45.6052, 10.6865], name: 'Da Carlo', type: 'walk', desc: 'Fußläufig: Burrata-Pizza, Miesmuscheln, Bigoli, Carbonara' },
+      { coords: [45.6056, 10.6857], name: 'Pizzeria alla Grotta', type: 'walk', desc: 'Fußläufig: Pizza, Lasagne, Tiramisu' },
+      { coords: [45.6370, 10.7070], name: 'Taverna Kus', type: 'car', desc: 'Mit Auto: Saisonale Küche mit Trüffel &amp; Kastanien' },
+      { coords: [45.5464, 10.7380], name: 'Locanda Pescadoro', type: 'car', desc: 'Mit Auto: Fischvariationen, Meeresfrüchte-Pasta' },
+      { coords: [45.5397, 10.7214], name: 'Locanda Al Cardellino', type: 'car', desc: 'Mit Auto: Fleischspezialitäten &amp; Tortelli' },
+      { coords: [45.5738, 10.6729], name: 'Locanda San Vigilio', type: 'car', desc: 'Mit Auto: See-Osteria mit traumhafter Aussicht' },
+      { coords: [45.6110, 10.7210], name: 'Le Gemme di Artemisia', type: 'car', desc: 'Mit Auto: privates Dinner mit individuellen Menüs' },
+      { coords: [45.6055, 10.6863], name: 'Hotel', type: 'hotel', desc: 'Ihr Hotel (Beispielkoordinaten)' }
+    ];
+
+    // Marker hinzufügen
+    markers.forEach(function(item) {
+      var color;
+      if (item.type === 'walk') color = '#10b981'; // grün
+      else if (item.type === 'car') color = '#f59e0b'; // orange
+      else color = '#3b82f6'; // blau für Hotel
+      var marker = L.circleMarker(item.coords, {
+        radius: 8,
+        color: color,
+        fillColor: color,
+        fillOpacity: 0.9
+      }).addTo(map);
+      marker.bindPopup('<strong>' + item.name + '</strong><br>' + item.desc);
+    });
+  });
 </script>
 
 </body>
