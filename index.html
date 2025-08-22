@@ -53,18 +53,20 @@
     nav{position:fixed;top:0;left:0;height:100%;width:60px;background:var(--card);padding:20px 0;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;}
     nav a{width:32px;height:32px;margin-bottom:16px;border-radius:50%;background:#123748;display:flex;align-items:center;justify-content:center;color:#8bd3ff;font-weight:bold;}
     nav a.active{background:var(--accent);color:#022;}
+    /* Offset the body content so the fixed sidebar doesn't overlap text */
+    body{padding-left:70px;}
   </style>
 </head>
 <body>
 <nav id="sidebar">
   <a href="#willkommen" title="Willkommen">I</a>
-  <a href="#anfahrt" title="Anfahrt">An</a>
-  <a href="#wetter" title="Wetter">II</a>
-  <a href="#plan" title="Plan">III</a>
-  <a href="#restaurants" title="Restaurants">IV</a>
-  <a href="#extras" title="Extras">V</a>
-  <a href="#karte" title="Karte">VI</a>
-  <a href="#fazit" title="Fazit">VII</a>
+  <a href="#anfahrt" title="Anfahrt">II</a>
+  <a href="#wetter" title="Wetter">III</a>
+  <a href="#plan" title="Plan">IV</a>
+  <a href="#restaurants" title="Restaurants">V</a>
+  <a href="#extras" title="Extras">VI</a>
+  <a href="#karte" title="Karte">VII</a>
+  <a href="#fazit" title="Fazit">VIII</a>
 </nav>
 <header class="hero">
   <h1>Ihr Familienurlaub in Torri del Benaco – Wetter, Ausflüge &amp; Restaurants</h1>
@@ -92,7 +94,7 @@
 
   <!-- Anfahrt / Reiseplanung -->
   <section id="anfahrt">
-    <h2>Anfahrt &amp; Reiseplanung</h2>
+    <h2>II. Anfahrt &amp; Reiseplanung</h2>
     <p class="lead">Wählen Sie Ihre bevorzugte Route und Navigations-App. Beide Routen bringen Sie nach Torri del Benaco – entweder über den Brennerpass oder den Fernpass. </p>
     <div class="grid two">
       <div class="card">
@@ -114,7 +116,7 @@
 
   <!-- Wetter -->
   <section id="wetter">
-    <h2>II. Live-Wetter für Torri del Benaco</h2>
+    <h2>III. Live-Wetter für Torri del Benaco</h2>
     <p class="lead">Automatisch aktualisierte Prognose (5–7 Tage). Quelle: forecast7.com / weatherwidget.io</p>
     <div class="weatherwrap card">
       <a class="weatherwidget-io" href="https://forecast7.com/en/45d6110d69/torri-del-benaco/" data-label_1="Torri del Benaco" data-label_2="Wetter" data-days="6" data-theme="dark" data-basecolor="#0f2c3d" data-textcolor="#eaf6ff" data-accent="rgba(24,160,251,1)" data-highcolor="#fff" data-lowcolor="#a6c6d6" data-raincolor="#8bd3ff">Torri del Benaco Wetter</a>
@@ -123,7 +125,7 @@
 
   <!-- 6-Tages-Plan -->
   <section id="plan">
-    <h2>III. 6‑Tage‑Ausflugsplan</h2>
+    <h2>IV. 6‑Tage‑Ausflugsplan</h2>
     <div class="grid two">
       <details open>
         <summary>Tag 1 – Ankunft &amp; Dorf (Scaligerburg, Strand)</summary>
@@ -156,7 +158,7 @@
 
   <!-- Restaurant-Empfehlungen -->
   <section id="restaurants">
-    <h2>IV. Restaurant‑Empfehlungen</h2>
+    <h2>V. Restaurant‑Empfehlungen</h2>
     <p class="lead">Sortiert nach fußläufig in Torri (praktisch zur Hotel‑Lage) und lohnenden Zielen per Auto. Besonderheiten wie Aussicht, gemütliche Räume oder familienfreundliche Spots sind markiert.</p>
     <div class="grid two">
       <div class="card">
@@ -195,7 +197,7 @@
 
   <!-- Weitere Ausflüge -->
   <section id="extras">
-    <h2>V. Weitere familienfreundliche Ausflüge</h2>
+    <h2>VI. Weitere familienfreundliche Ausflüge</h2>
     <div class="grid gallery">
       <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Peschiera_del_Garda,_at_the_marina.jpg/1280px-Peschiera_del_Garda,_at_the_marina.jpg" alt="Peschiera del Garda"><figcaption>Peschiera: Festung &amp; Sandstrand</figcaption></figure>
       <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Bardolino_Ufer.JPG" alt="Bardolino Ufer"><figcaption>Bardolino: Promenade &amp; Markt</figcaption></figure>
@@ -208,7 +210,7 @@
 
   <!-- Karte -->
   <section id="karte">
-    <h2>VI. Restaurants &amp; Hotel auf der Karte</h2>
+    <h2>VII. Restaurants &amp; Hotel auf der Karte</h2>
     <p class="lead">Grün = fußläufig, Orange = mit Auto, Blau = Hotel.</p>
     <div class="card" style="padding:0">
       <div id="leaflet-map" role="region" aria-label="Karte mit Restaurants und Hotel"></div>
@@ -218,7 +220,7 @@
 
   <!-- Fazit -->
   <section id="fazit">
-    <h2>VII. Fazit &amp; Empfehlungen</h2>
+    <h2>VIII. Fazit &amp; Empfehlungen</h2>
     <p class="lead">Mit Torri del Benaco habt ihr einen kompakten, super gelegenen Startpunkt: Wasser, Berge, Fähren, Freizeitparks – und viele familienfreundliche Optionen in kurzer Distanz. Früh starten, Tickets online sichern, viel trinken &amp; Sonnenschutz – dann wird’s entspannt.</p>
   </section>
 
