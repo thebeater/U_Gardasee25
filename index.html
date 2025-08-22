@@ -50,6 +50,66 @@
     #leaflet-map{height:520px;width:100%;border-radius:12px;}
     footer{text-align:center;color:#86b7c9;margin:36px 0;}
     .tip{color:#b9d7e6;font-size:.95rem;margin-top:6px;}
+    /* Scroll indicator bar at top */
+    #scroll-indicator{
+      position:fixed;
+      top:0;
+      left:0;
+      height:4px;
+      background:var(--accent);
+      width:0%;
+      z-index:1000;
+    }
+    /* Back to top button */
+    #back-to-top{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      padding:10px 12px;
+      border-radius:50%;
+      border:none;
+      background:var(--accent);
+      color:#022;
+      cursor:pointer;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .3s;
+      z-index:900;
+    }
+    #back-to-top.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+    /* Map filter controls */
+    #map-filters{
+      display:flex;
+      gap:12px;
+      margin:10px 0;
+      align-items:center;
+    }
+    #map-filters label{
+      display:flex;
+      align-items:center;
+      gap:4px;
+      color:var(--muted);
+      font-size:0.95rem;
+    }
+    /* Fade-in animation */
+    .fade-in{
+      opacity:0;
+      transform:translateY(20px);
+      transition:opacity .6s ease, transform .6s ease;
+    }
+    .fade-in.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+    /* Walking time info text */
+    .walking-info{
+      color:var(--muted);
+      font-size:0.9rem;
+      margin-bottom:12px;
+    }
     /* Burger menu styles */
     .menu-toggle{
       position:fixed;
@@ -87,6 +147,8 @@
   </style>
 </head>
 <body>
+  <!-- Progress bar for scroll indicator -->
+  <div id="scroll-indicator"></div>
 <!-- Burger menu toggle and navigation -->
 <button class="menu-toggle" aria-label="Menü">☰</button>
 <nav id="burger-menu" class="burger-menu">
@@ -165,6 +227,7 @@
       <!-- Fußläufige Restaurants als Karten -->
       <div class="card">
         <h3>Fußläufig in Torri del Benaco</h3>
+        <p class="walking-info">Gehzeiten basieren auf der Luftliniendistanz zwischen Hotel und Restaurant sowie einer durchschnittlichen Gehgeschwindigkeit von ca.&nbsp;4&nbsp;km/h. Tatsächliche Wegezeiten können je nach Route und Tempo variieren.</p>
         <div class="grid gallery">
           <div class="card">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Pizza_for_High-End_Italian_Restaurant_(Unsplash).jpg/1280px-Pizza_for_High-End_Italian_Restaurant_(Unsplash).jpg" alt="Pizza">
@@ -305,6 +368,11 @@
   <section id="karte">
     <h2>VI. Restaurants &amp; Hotel auf der Karte</h2>
     <p class="lead">Grün = fußläufig, Orange = mit Auto, Blau = Hotel.</p>
+    <!-- Filter controls for map layers -->
+    <div id="map-filters">
+      <label><input type="checkbox" id="filter-walk" checked> Fußläufig</label>
+      <label><input type="checkbox" id="filter-drive" checked> Mit dem Auto</label>
+    </div>
     <div class="card" style="padding:0">
       <div id="leaflet-map" role="region" aria-label="Karte mit Restaurants und Hotel"></div>
     </div>
@@ -318,6 +386,8 @@
   </section>
 
   <footer>Familienurlaub am Gardasee – © 2025</footer>
+  <!-- Back-to-top button -->
+  <button id="back-to-top" aria-label="Zurück nach oben">↑</button>
 </main>
 
 <!-- Script: Burger menu toggle -->
@@ -399,10 +469,72 @@
     }
     WALK_SPOTS.forEach(s => addPoint(walkGroup,s.coords[0],s.coords[1],'#10b981',s.name,s.note));
     DRIVE_SPOTS.forEach(s => addPoint(driveGroup,s.coords[0],s.coords[1],'#f59e0b',s.name,s.note));
-    L.control.layers(null,{ 'Fußläufig':walkGroup, 'Mit dem Auto':driveGroup },{ collapsed:false }).addTo(map);
+    // Expose layer groups and map for external toggles
+    window.walkGroup = walkGroup;
+    window.driveGroup = driveGroup;
+    window.map = map;
+    // Fit map to markers
     if (bounds.isValid()) map.fitBounds(bounds.pad(0.18));
     setTimeout(() => map.invalidateSize(), 250);
   });
+})();
+</script>
+
+<!-- Script: Scroll indicator, back-to-top button, fade-in animations, map filters -->
+<script>
+(function(){
+  // Elements
+  const progressBar = document.getElementById('scroll-indicator');
+  const backToTop   = document.getElementById('back-to-top');
+  // Update scroll indicator and back-to-top visibility
+  function updateScroll(){
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const percent = docHeight ? (scrollTop / docHeight) * 100 : 0;
+    if(progressBar) progressBar.style.width = percent + '%';
+    if(backToTop){
+      if(scrollTop > 600){ backToTop.classList.add('show'); }
+      else { backToTop.classList.remove('show'); }
+    }
+  }
+  window.addEventListener('scroll', updateScroll);
+  updateScroll();
+  // Back-to-top click handler
+  if(backToTop){
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+  // Fade-in for cards
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('#restaurants .card, #extras .card').forEach(el => {
+    el.classList.add('fade-in');
+    observer.observe(el);
+  });
+  // Map filters
+  const filterWalk  = document.getElementById('filter-walk');
+  const filterDrive = document.getElementById('filter-drive');
+  function toggleLayers(){
+    if(filterWalk && window.walkGroup){
+      if(filterWalk.checked){ window.map.addLayer(window.walkGroup); }
+      else { window.map.removeLayer(window.walkGroup); }
+    }
+    if(filterDrive && window.driveGroup){
+      if(filterDrive.checked){ window.map.addLayer(window.driveGroup); }
+      else { window.map.removeLayer(window.driveGroup); }
+    }
+  }
+  if(filterWalk) filterWalk.addEventListener('change', toggleLayers);
+  if(filterDrive) filterDrive.addEventListener('change', toggleLayers);
+  // initial call
+  toggleLayers();
 })();
 </script>
 </body>
