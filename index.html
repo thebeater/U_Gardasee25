@@ -50,23 +50,54 @@
     #leaflet-map{height:520px;width:100%;border-radius:12px;}
     footer{text-align:center;color:#86b7c9;margin:36px 0;}
     .tip{color:#b9d7e6;font-size:.95rem;margin-top:6px;}
-    nav{position:fixed;top:0;left:0;height:100%;width:60px;background:var(--card);padding:20px 0;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;}
-    nav a{width:32px;height:32px;margin-bottom:16px;border-radius:50%;background:#123748;display:flex;align-items:center;justify-content:center;color:#8bd3ff;font-weight:bold;}
-    nav a.active{background:var(--accent);color:#022;}
-    /* Offset the body content so the fixed sidebar doesn't overlap text */
-    body{padding-left:70px;}
+    /* Burger menu styles */
+    .menu-toggle{
+      position:fixed;
+      top:10px;
+      left:10px;
+      z-index:1000;
+      background:var(--card);
+      color:#8bd3ff;
+      border:1px solid rgba(255,255,255,.3);
+      padding:8px 12px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:22px;
+    }
+    .burger-menu{
+      display:none;
+      position:fixed;
+      top:0;
+      left:0;
+      width:220px;
+      height:100vh;
+      background:var(--card);
+      border-right:1px solid rgba(255,255,255,.06);
+      padding:20px;
+      z-index:999;
+      overflow-y:auto;
+    }
+    .burger-menu.open{display:block;}
+    .burger-menu a{
+      display:block;
+      margin-bottom:14px;
+      color:#8bd3ff;
+      font-weight:600;
+    }
   </style>
 </head>
 <body>
-<nav id="sidebar">
-  <a href="#willkommen" title="Willkommen">I</a>
-  <a href="#anfahrt" title="Anfahrt">II</a>
-  <a href="#wetter" title="Wetter">III</a>
-  <a href="#plan" title="Plan">IV</a>
-  <a href="#restaurants" title="Restaurants">V</a>
-  <a href="#extras" title="Extras">VI</a>
-  <a href="#karte" title="Karte">VII</a>
-  <a href="#fazit" title="Fazit">VIII</a>
+<!-- Burger menu toggle and navigation -->
+<button class="menu-toggle" aria-label="Menü">☰</button>
+<nav id="burger-menu" class="burger-menu">
+  <a href="#willkommen">Willkommen</a>
+  <a href="#anfahrt">Anfahrt &amp; Reiseplanung</a>
+  <a href="#wetter">Live-Wetter</a>
+  <a href="#plan">6‑Tage‑Plan</a>
+  <a href="#restaurants">Restaurants</a>
+  <a href="#extras">Ausflüge &amp; Märkte</a>
+  <a href="#karte">Karte</a>
+  <a href="#fazit">Fazit</a>
 </nav>
 <header class="hero">
   <h1>Ihr Familienurlaub in Torri del Benaco – Wetter, Ausflüge &amp; Restaurants</h1>
@@ -275,8 +306,12 @@
 
   <!-- Weitere Ausflüge -->
   <section id="extras">
-    <h2>VI. Weitere familienfreundliche Ausflüge</h2>
+    <h2>VI. Weitere familienfreundliche Ausflüge &amp; Märkte</h2>
     <div class="grid gallery">
+      <!-- Märkte während des Aufenthalts (Daten: 26.–29.08.2025) -->
+      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Garda_Lake_%28Cisano%29.jpg/1280px-Garda_Lake_%28Cisano%29.jpg" alt="Cisano Markt"><figcaption><a href="https://www.google.com/maps/search/?api=1&query=Cisano+Markt+Gardasee" target="_blank" rel="noopener">Cisano Wochenmarkt (Di 26.08., 08–13 Uhr)</a></figcaption></figure>
+      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Bardolino_Ufer.JPG" alt="Bardolino Handwerksmarkt"><figcaption><a href="https://www.google.com/maps/search/?api=1&query=Bardolino+Handwerksmarkt" target="_blank" rel="noopener">Bardolino Handwerksmarkt (Di 26.08., 18–23 Uhr)</a></figcaption></figure>
+      <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Bardolino_Ufer.JPG" alt="Bardolino Wochenmarkt"><figcaption><a href="https://www.google.com/maps/search/?api=1&query=Bardolino+Wochenmarkt" target="_blank" rel="noopener">Bardolino Wochenmarkt (Do 28.08., 08–13 Uhr)</a></figcaption></figure>
       <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Peschiera_del_Garda,_at_the_marina.jpg/1280px-Peschiera_del_Garda,_at_the_marina.jpg" alt="Peschiera del Garda"><figcaption><a href="https://www.google.com/maps/search/?api=1&query=Peschiera+del+Garda" target="_blank" rel="noopener">Peschiera: Festung &amp; Sandstrand</a></figcaption></figure>
       <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Bardolino_Ufer.JPG" alt="Bardolino Ufer"><figcaption><a href="https://www.google.com/maps/search/?api=1&query=Bardolino" target="_blank" rel="noopener">Bardolino: Promenade &amp; Markt</a></figcaption></figure>
       <figure class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Limone_sul_Garda_-_Strand.jpg/1280px-Limone_sul_Garda_-_Strand.jpg" alt="Limone Panorama"><figcaption><a href="https://www.google.com/maps/search/?api=1&query=Limone+sul+Garda" target="_blank" rel="noopener">Limone: Panoramen &amp; Radweg</a></figcaption></figure>
@@ -305,30 +340,20 @@
   <footer>Familienurlaub am Gardasee – © 2025</footer>
 </main>
 
-<!-- Script: Kapitel-Navigation aktiv anzeigen -->
+<!-- Script: Burger menu toggle -->
 <script>
 (function(){
-  const navLinks = document.querySelectorAll('#sidebar a');
-  const sections = [];
-  navLinks.forEach(link => {
-    const target = document.querySelector(link.getAttribute('href'));
-    if (target) sections.push(target);
-  });
-  function onScroll() {
-    let index = sections.length - 1;
-    for (let i = 0; i < sections.length; i++) {
-      const rect = sections[i].getBoundingClientRect();
-      if (rect.top > 120) {
-        index = i - 1;
-        break;
-      }
-    }
-    if (index < 0) index = 0;
-    navLinks.forEach(link => link.classList.remove('active'));
-    if (navLinks[index]) navLinks[index].classList.add('active');
+  const toggle = document.querySelector('.menu-toggle');
+  const menu = document.getElementById('burger-menu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', function(){
+      menu.classList.toggle('open');
+    });
+    // Optional: close menu when a link is clicked
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => menu.classList.remove('open'));
+    });
   }
-  window.addEventListener('scroll', onScroll);
-  onScroll();
 })();
 </script>
 
